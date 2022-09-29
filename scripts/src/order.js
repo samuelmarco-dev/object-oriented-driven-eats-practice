@@ -9,9 +9,8 @@ export default class Order {
         return this.dish && this.drink && this.dessert;
     }
 
-    totalPrice() {
-        const { dish, drink, dessert } = this;
-        return dish.price + drink.price + dessert.price;
+    getTotalPrice() {
+        return this.dish.price + this.drink.price + this.dessert.price;
     }
 
     sendWhatsApp() {
@@ -21,7 +20,7 @@ export default class Order {
                 this.dish.name
             } \n- Bebida: ${this.drink.name} \n- Sobremesa: ${
                 this.dessert.name
-            } \nTotal: R$ ${this.totalPrice().toFixed(2)}`
+            } \nTotal: R$ ${this.getTotalPrice().toFixed(2)}`
         );
 
         const urlWhatsapp = `https://wa.me/${telefoneRestaurante}?text=${encodedText}`;
