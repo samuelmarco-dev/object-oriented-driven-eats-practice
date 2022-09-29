@@ -15,15 +15,15 @@ export default class Order {
     }
 
     sendWhatsApp() {
-        const telefoneRestaurante = '553299999999';
+        const telefoneRestaurante = "553299999999";
         const encodedText = encodeURIComponent(
-          `Olá, gostaria de fazer o pedido: \n- Prato: ${
-            this.dish.name
-          } \n- Bebida: ${this.drink.name} \n- Sobremesa: ${
-            this.dessert.name
-          } \nTotal: R$ ${this.totalPrice().toFixed(2)}`
+            `Olá, gostaria de fazer o pedido: \n- Prato: ${
+                this.dish.name
+            } \n- Bebida: ${this.drink.name} \n- Sobremesa: ${
+                this.dessert.name
+            } \nTotal: R$ ${this.totalPrice().toFixed(2)}`
         );
-      
+
         const urlWhatsapp = `https://wa.me/${telefoneRestaurante}?text=${encodedText}`;
         window.open(urlWhatsapp);
     }
