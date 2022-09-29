@@ -556,8 +556,8 @@ var _modalDefault = parcelHelpers.interopDefault(_modal);
 class Restaurant {
     constructor(dishes, drinks, desserts){
         this.dishes = this.buildDishes(dishes);
-        this.drinks = this.buildDrinks(drinks);
-        this.desserts = this.buildDessert(desserts);
+        // this.drinks = this.buildDrinks(drinks);
+        // this.desserts = this.buildDessert(desserts);
         this.order = new (0, _orderDefault.default)();
         this.button = document.querySelector(".fazer-pedido");
     }
@@ -570,19 +570,29 @@ class Restaurant {
             return dish;
         });
     }
-    buildDrinks(drinks) {
-        console.log(drinks);
-    }
-    buildDesserts(desserts) {
-        console.log(desserts);
-    }
+    // buildDrinks(drinks) {
+    //     return drinks.map(({ name, description, image, price }) => {
+    //         const container = document.querySelector(".opcoes.bebida");
+    //         const drink = new Drink(name, description, price, image);
+    //         drink.draw(container, this.onClickCallback.bind(this));
+    //         return drink;
+    //     });
+    // }
+    // buildDesserts(desserts) {
+    //     return desserts.map(({ name, description, image, price }) => {
+    //         const container = document.querySelector(".opcoes.sobremesa");
+    //         const dessert = new Dessert(name, description, price, image);
+    //         dessert.draw(container, this.onClickCallback.bind(this));
+    //         return dessert;
+    //     });
+    // }
     onClickCallback(option) {
         if (option instanceof (0, _dishDefault.default)) this.order.dish = option;
         if (option instanceof (0, _drinkDefault.default)) this.order.drink = option;
         if (option instanceof (0, _dessertDefault.default)) this.order.dessert = option;
-        if (this.order.isReady() && !this.button.classList.contains("ativo")) this.enableButton();
+        if (this.order.isReady() && !this.button.classList.contains("ativo")) this.enableOrderButton();
     }
-    enableButton() {
+    enableOrderButton() {
         this.button.classList.add("ativo");
         this.button.disabled = false;
         this.button.innerHTML = `Fazer pedido...`;
@@ -650,11 +660,11 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class Dish {
-    constructor(name, description, price, image){
-        this.name = name;
+    constructor(description, image, name, price){
         this.description = description;
-        this.price = price;
         this.image = image;
+        this.name = name;
+        this.price = price;
         this.element = null;
     }
     draw(container, callback) {
@@ -690,12 +700,38 @@ exports.default = Dish;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class Drink {
-    constructor(name, description, price, image, container){
-        this.name = name;
+    constructor(description, image, name, price){
         this.description = description;
-        this.price = price;
         this.image = image;
+        this.name = name;
+        this.price = price;
         this.element = null;
+    }
+    draw(container, callback) {
+        const div = document.createElement("div");
+        div.classList.add("opcao");
+        div, addEventListener("click", ()=>{
+            this.select(callback);
+        });
+        div.innerHTML = `
+            <img src="${this.image}" />
+            <div class="titulo">${this.name}</div>
+            <div class="descricao">${this.description}</div>
+            <div class="fundo">
+                <div class="preco">R$ ${this.price.toFixed(2)}</div>
+                <div class="check">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                </div>
+            </div>
+        `;
+        this.element = div;
+        container.appendChild(div);
+    }
+    select(callback) {
+        const element = document.querySelector(".bebida .selecionado");
+        if (element) element.classList.remove("selecionado");
+        this.element.classList.add("selecionado");
+        callback(this);
     }
 }
 exports.default = Drink;
@@ -704,12 +740,38 @@ exports.default = Drink;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class Dessert {
-    constructor(name, description, price, image, container){
-        this.name = name;
+    constructor(description, image, name, price){
         this.description = description;
-        this.price = price;
         this.image = image;
+        this.name = name;
+        this.price = price;
         this.element = null;
+    }
+    draw(container, callback) {
+        const div = document.createElement("div");
+        div.classList.add("opcao");
+        div, addEventListener("click", ()=>{
+            this.select(callback);
+        });
+        div.innerHTML = `
+            <img src="${this.image}" />
+            <div class="titulo">${this.name}</div>
+            <div class="descricao">${this.description}</div>
+            <div class="fundo">
+                <div class="preco">R$ ${this.price.toFixed(2)}</div>
+                <div class="check">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                </div>
+            </div>
+        `;
+        this.element = div;
+        container.appendChild(div);
+    }
+    select(callback) {
+        const element = document.querySelector(".sobremesa .selecionado");
+        if (element) element.classList.remove("selecionado");
+        this.element.classList.add("selecionado");
+        callback(this);
     }
 }
 exports.default = Dessert;
@@ -760,7 +822,9 @@ class Modal {
             order.sendWhatsApp();
         });
         document.querySelector(".cancelar").addEventListener("click", ()=>{
-            setTimeout(()=>this.element.remove(), 400);
+            setTimeout(()=>{
+                this.element.remove();
+            }, 400);
         });
     }
 }
@@ -783,13 +847,13 @@ const dishes = [
         name: "Asa de Boi",
         image: "frango_yin_yang.png",
         description: "Com molho shoyu",
-        price: 14.9
+        price: 15.9
     },
     {
         name: "Carne de Monstro",
         image: "frango_yin_yang.png",
         description: "Com batata assada e farofa",
-        price: 14.9
+        price: 17.9
     }, 
 ];
 const drinks = [
@@ -803,13 +867,13 @@ const drinks = [
         name: "Caldo de Cana",
         image: "coquinha_gelada.png",
         description: "Copo 600ml",
-        price: 4.9
+        price: 3.9
     },
     {
         name: "Corote Gelado",
         image: "coquinha_gelada.png",
         description: "Garrafa 400ml",
-        price: 4.9
+        price: 2.9
     }, 
 ];
 const desserts = [
@@ -823,13 +887,13 @@ const desserts = [
         name: "Flam",
         image: "pudim.png",
         description: "Gosto de chocolate",
-        price: 7.9
+        price: 6.9
     },
     {
         name: "Brigadeiro",
         image: "pudim.png",
         description: "3 unidades",
-        price: 7.9
+        price: 4.9
     }, 
 ];
 

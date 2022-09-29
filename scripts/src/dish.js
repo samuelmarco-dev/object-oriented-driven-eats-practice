@@ -1,16 +1,19 @@
 export default class Dish {
-    constructor(name, description, price, image) {
-        this.name = name;
+    constructor(description, image, name, price) {
         this.description = description;
-        this.price = price;
         this.image = image;
+        this.name = name;
+        this.price = price;
         this.element = null;
     }
 
     draw(container, callback) {
         const div = document.createElement("div");
         div.classList.add("opcao");
-        div, addEventListener("click", () => { this.select(callback) });
+        div,
+            addEventListener("click", () => {
+                this.select(callback);
+            });
 
         div.innerHTML = `
             <img src="${this.image}" />
@@ -30,7 +33,7 @@ export default class Dish {
 
     select(callback) {
         const element = document.querySelector(".prato .selecionado");
-        if(element) element.classList.remove("selecionado");
+        if (element) element.classList.remove("selecionado");
         this.element.classList.add("selecionado");
 
         callback(this);

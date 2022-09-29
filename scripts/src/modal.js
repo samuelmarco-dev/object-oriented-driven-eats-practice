@@ -44,7 +44,9 @@ export default class Modal {
             order.sendWhatsApp();
         });
         document.querySelector(".cancelar").addEventListener("click", () => {
-            setTimeout(() => this.element.remove(), 400);
+            setTimeout(() => { 
+                this.element.remove(); 
+            }, 400);
         });
     }
 }

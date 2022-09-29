@@ -7,14 +7,14 @@ import Modal from "./modal";
 export default class Restaurant {
     constructor(dishes, drinks, desserts) {
         this.dishes = this.buildDishes(dishes);
-        this.drinks = this.buildDrinks(drinks);
-        this.desserts = this.buildDessert(desserts);
+        // this.drinks = this.buildDrinks(drinks);
+        // this.desserts = this.buildDessert(desserts);
         this.order = new Order();
         this.button = document.querySelector(".fazer-pedido");
     }
 
     buildDishes(dishes) {
-        return dishes.map((object) => {
+        return dishes.map(object => {
             const { name, description, image, price } = object;
             const container = document.querySelector(".opcoes.prato");
             const dish = new Dish(name, description, price, image);
@@ -24,13 +24,25 @@ export default class Restaurant {
         });
     }
 
-    buildDrinks(drinks) {
-        console.log(drinks);
-    }
+    // buildDrinks(drinks) {
+    //     return drinks.map(({ name, description, image, price }) => {
+    //         const container = document.querySelector(".opcoes.bebida");
+    //         const drink = new Drink(name, description, price, image);
+    //         drink.draw(container, this.onClickCallback.bind(this));
 
-    buildDesserts(desserts) {
-        console.log(desserts);
-    }
+    //         return drink;
+    //     });
+    // }
+
+    // buildDesserts(desserts) {
+    //     return desserts.map(({ name, description, image, price }) => {
+    //         const container = document.querySelector(".opcoes.sobremesa");
+    //         const dessert = new Dessert(name, description, price, image);
+    //         dessert.draw(container, this.onClickCallback.bind(this));
+
+    //         return dessert;
+    //     });
+    // }
 
     onClickCallback(option) {
         if(option instanceof Dish) this.order.dish = option;
@@ -38,11 +50,11 @@ export default class Restaurant {
         if(option instanceof Dessert) this.order.dessert = option;
 
         if (this.order.isReady() && !this.button.classList.contains("ativo")) {
-            this.enableButton();
+            this.enableOrderButton();
         }
     }
 
-    enableButton() {
+    enableOrderButton() {
         this.button.classList.add("ativo");
         this.button.disabled = false;
         this.button.innerHTML = `Fazer pedido...`;

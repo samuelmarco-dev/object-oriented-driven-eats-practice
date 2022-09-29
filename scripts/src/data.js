@@ -9,13 +9,13 @@ export const dishes = [
         name: "Asa de Boi",
         image: "frango_yin_yang.png",
         description: "Com molho shoyu",
-        price: 14.9,
+        price: 15.9,
     },
     {
         name: "Carne de Monstro",
         image: "frango_yin_yang.png",
         description: "Com batata assada e farofa",
-        price: 14.9,
+        price: 17.9,
     },
 ];
 
@@ -30,13 +30,13 @@ export const drinks = [
         name: "Caldo de Cana",
         image: "coquinha_gelada.png",
         description: "Copo 600ml",
-        price: 4.9,
+        price: 3.9,
     },
     {
         name: "Corote Gelado",
         image: "coquinha_gelada.png",
         description: "Garrafa 400ml",
-        price: 4.9,
+        price: 2.9,
     },
 ];
 
@@ -51,12 +51,12 @@ export const desserts = [
         name: "Flam",
         image: "pudim.png",
         description: "Gosto de chocolate",
-        price: 7.9,
+        price: 6.9,
     },
     {
         name: "Brigadeiro",
         image: "pudim.png",
         description: "3 unidades",
-        price: 7.9,
+        price: 4.9,
     },
 ];
