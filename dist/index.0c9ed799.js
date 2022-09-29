@@ -556,47 +556,46 @@ var _modalDefault = parcelHelpers.interopDefault(_modal);
 class Restaurant {
     constructor(dishes, drinks, desserts){
         this.dishes = this.buildDishes(dishes);
-        // this.drinks = this.buildDrinks(drinks);
-        // this.desserts = this.buildDessert(desserts);
+        this.drinks = this.buildDrinks(drinks);
+        this.dessert = this.buildDesserts(desserts);
         this.order = new (0, _orderDefault.default)();
-        this.button = document.querySelector(".fazer-pedido");
+        this.orderButton = document.querySelector(".fazer-pedido");
     }
-    buildDishes(dishes) {
-        return dishes.map((object)=>{
-            const { name , description , image , price  } = object;
-            const container = document.querySelector(".opcoes.prato");
-            const dish = new (0, _dishDefault.default)(name, description, price, image);
-            dish.draw(container, this.onClickCallback.bind(this));
-            return dish;
-        });
-    }
-    // buildDrinks(drinks) {
-    //     return drinks.map(({ name, description, image, price }) => {
-    //         const container = document.querySelector(".opcoes.bebida");
-    //         const drink = new Drink(name, description, price, image);
-    //         drink.draw(container, this.onClickCallback.bind(this));
-    //         return drink;
-    //     });
-    // }
-    // buildDesserts(desserts) {
-    //     return desserts.map(({ name, description, image, price }) => {
-    //         const container = document.querySelector(".opcoes.sobremesa");
-    //         const dessert = new Dessert(name, description, price, image);
-    //         dessert.draw(container, this.onClickCallback.bind(this));
-    //         return dessert;
-    //     });
-    // }
     onClickCallback(option) {
         if (option instanceof (0, _dishDefault.default)) this.order.dish = option;
         if (option instanceof (0, _drinkDefault.default)) this.order.drink = option;
         if (option instanceof (0, _dessertDefault.default)) this.order.dessert = option;
-        if (this.order.isReady() && !this.button.classList.contains("ativo")) this.enableOrderButton();
+        if (this.order.isReady() && !this.orderButton.classList.contains("ativo")) this.enableOrderButton();
     }
     enableOrderButton() {
-        this.button.classList.add("ativo");
-        this.button.disabled = false;
-        this.button.innerHTML = `Fazer pedido...`;
-        this.button.addEventListener("click", ()=>new (0, _modalDefault.default)().open(this.order));
+        this.orderButton.classList.add("ativo");
+        this.orderButton.disabled = false;
+        this.orderButton.innerHTML = "Fazer pedido";
+        this.orderButton.addEventListener("click", ()=>new (0, _modalDefault.default)().open(this.order));
+    }
+    buildDishes(dishes) {
+        return dishes.map(({ name , image , description , price  })=>{
+            const dishContainer = document.querySelector(".opcoes.prato");
+            const dish = new (0, _dishDefault.default)(name, image, description, price);
+            dish.draw(dishContainer, this.onClickCallback.bind(this));
+            return dish;
+        });
+    }
+    buildDrinks(drinks) {
+        return drinks.map(({ name , image , description , price  })=>{
+            const drinkContainer = document.querySelector(".opcoes.bebida");
+            const drink = new (0, _drinkDefault.default)(name, image, description, price);
+            drink.draw(drinkContainer, this.onClickCallback.bind(this));
+            return drink;
+        });
+    }
+    buildDesserts(desserts) {
+        return desserts.map(({ name , image , description , price  })=>{
+            const dessertContainer = document.querySelector(".opcoes.sobremesa");
+            const dessert = new (0, _dessertDefault.default)(name, image, description, price);
+            dessert.draw(dessertContainer, this.onClickCallback.bind(this));
+            return dessert;
+        });
     }
 }
 exports.default = Restaurant;
@@ -613,13 +612,12 @@ class Order {
     isReady() {
         return this.dish && this.drink && this.dessert;
     }
-    totalPrice() {
-        const { dish , drink , dessert  } = this;
-        return dish.price + drink.price + dessert.price;
+    getTotalPrice() {
+        return this.dish.price + this.drink.price + this.dessert.price;
     }
     sendWhatsApp() {
         const telefoneRestaurante = "553299999999";
-        const encodedText = encodeURIComponent(`Olá, gostaria de fazer o pedido: \n- Prato: ${this.dish.name} \n- Bebida: ${this.drink.name} \n- Sobremesa: ${this.dessert.name} \nTotal: R$ ${this.totalPrice().toFixed(2)}`);
+        const encodedText = encodeURIComponent(`Olá, gostaria de fazer o pedido: \n- Prato: ${this.dish.name} \n- Bebida: ${this.drink.name} \n- Sobremesa: ${this.dessert.name} \nTotal: R$ ${this.getTotalPrice().toFixed(2)}`);
         const urlWhatsapp = `https://wa.me/${telefoneRestaurante}?text=${encodedText}`;
         window.open(urlWhatsapp);
     }
@@ -660,36 +658,38 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class Dish {
-    constructor(description, image, name, price){
-        this.description = description;
-        this.image = image;
+    constructor(name, image, description, price){
         this.name = name;
+        this.image = image;
+        this.description = description;
         this.price = price;
         this.element = null;
+        this.class = "prato";
     }
-    draw(container, callback) {
+    draw(parentElement, callback) {
         const div = document.createElement("div");
         div.classList.add("opcao");
-        div, addEventListener("click", ()=>{
-            this.select(callback);
+        div.addEventListener("click", ()=>{
+            this.selectOption(callback);
         });
         div.innerHTML = `
-            <img src="${this.image}" />
-            <div class="titulo">${this.name}</div>
-            <div class="descricao">${this.description}</div>
-            <div class="fundo">
-                <div class="preco">R$ ${this.price.toFixed(2)}</div>
-                <div class="check">
-                    <ion-icon name="checkmark-circle"></ion-icon>
-                </div>
+        <img src="${this.image}" />
+        <div class="titulo">${this.name}</div>
+        <div class="descricao">${this.description}</div>
+        <div class="fundo">
+            <div class="preco">R$ ${this.price.toFixed(2)}</div>
+            <div class="check">
+                <ion-icon name="checkmark-circle"></ion-icon>
             </div>
-        `;
+        </div>
+      `;
         this.element = div;
-        container.appendChild(div);
+        parentElement.appendChild(div);
     }
-    select(callback) {
-        const element = document.querySelector(".prato .selecionado");
-        if (element) element.classList.remove("selecionado");
+    selectOption(callback) {
+        // remove from all
+        const before = document.querySelector(`.${this.class} .selecionado`);
+        if (before) before.classList.remove("selecionado");
         this.element.classList.add("selecionado");
         callback(this);
     }
@@ -700,36 +700,38 @@ exports.default = Dish;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class Drink {
-    constructor(description, image, name, price){
-        this.description = description;
-        this.image = image;
+    constructor(name, image, description, price){
         this.name = name;
+        this.image = image;
+        this.description = description;
         this.price = price;
+        this.class = "bebida";
         this.element = null;
     }
-    draw(container, callback) {
+    draw(parentElement, callback) {
         const div = document.createElement("div");
         div.classList.add("opcao");
-        div, addEventListener("click", ()=>{
-            this.select(callback);
+        div.addEventListener("click", ()=>{
+            this.selectOption(callback);
         });
         div.innerHTML = `
-            <img src="${this.image}" />
-            <div class="titulo">${this.name}</div>
-            <div class="descricao">${this.description}</div>
-            <div class="fundo">
-                <div class="preco">R$ ${this.price.toFixed(2)}</div>
-                <div class="check">
-                    <ion-icon name="checkmark-circle"></ion-icon>
-                </div>
+        <img src="${this.image}" />
+        <div class="titulo">${this.name}</div>
+        <div class="descricao">${this.description}</div>
+        <div class="fundo">
+            <div class="preco">R$ ${this.price.toFixed(2)}</div>
+            <div class="check">
+                <ion-icon name="checkmark-circle"></ion-icon>
             </div>
-        `;
+        </div>
+      `;
         this.element = div;
-        container.appendChild(div);
+        parentElement.appendChild(div);
     }
-    select(callback) {
-        const element = document.querySelector(".bebida .selecionado");
-        if (element) element.classList.remove("selecionado");
+    selectOption(callback) {
+        // remove from all
+        const before = document.querySelector(`.${this.class} .selecionado`);
+        if (before) before.classList.remove("selecionado");
         this.element.classList.add("selecionado");
         callback(this);
     }
@@ -740,36 +742,38 @@ exports.default = Drink;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class Dessert {
-    constructor(description, image, name, price){
-        this.description = description;
-        this.image = image;
+    constructor(name, image, description, price){
         this.name = name;
+        this.image = image;
+        this.description = description;
         this.price = price;
+        this.class = "sobremesa";
         this.element = null;
     }
-    draw(container, callback) {
+    draw(parentElement, callback) {
         const div = document.createElement("div");
         div.classList.add("opcao");
-        div, addEventListener("click", ()=>{
-            this.select(callback);
+        div.addEventListener("click", ()=>{
+            this.selectOption(callback);
         });
         div.innerHTML = `
-            <img src="${this.image}" />
-            <div class="titulo">${this.name}</div>
-            <div class="descricao">${this.description}</div>
-            <div class="fundo">
-                <div class="preco">R$ ${this.price.toFixed(2)}</div>
-                <div class="check">
-                    <ion-icon name="checkmark-circle"></ion-icon>
-                </div>
+        <img src="${this.image}" />
+        <div class="titulo">${this.name}</div>
+        <div class="descricao">${this.description}</div>
+        <div class="fundo">
+            <div class="preco">R$ ${this.price.toFixed(2)}</div>
+            <div class="check">
+                <ion-icon name="checkmark-circle"></ion-icon>
             </div>
-        `;
+        </div>
+      `;
         this.element = div;
-        container.appendChild(div);
+        parentElement.appendChild(div);
     }
-    select(callback) {
-        const element = document.querySelector(".sobremesa .selecionado");
-        if (element) element.classList.remove("selecionado");
+    selectOption(callback) {
+        // remove from all
+        const before = document.querySelector(`.${this.class} .selecionado`);
+        if (before) before.classList.remove("selecionado");
         this.element.classList.add("selecionado");
         callback(this);
     }
@@ -787,45 +791,41 @@ class Modal {
         const modal = document.createElement("div");
         const { dish , drink , dessert  } = order;
         modal.innerHTML = `
-            <div class="overlay">
-                <div class="confirmar-pedido">
-                    <div class="titulo">Confirme seu pedido</div>
-                    <ul>
-                    <li class="prato">
-                        <div class="nome">${dish.name}</div>
-                        <div class="preco">${dish.price}</div>
-                    </li>
-                    <li class="bebida">
-                        <div class="nome">${drink.name}</div>
-                        <div class="preco">${drink.price}</div>
-                    </li>
-                    <li class="sobremesa">
-                        <div class="nome">${dessert.name}</div>
-                        <div class="preco">${dessert.price}</div>
-                    </li>
-                    <li class="total">
-                        <div>Total</div>
-                        <div class="preco">R$ ${order.totalPrice().toFixed(2)}</div>
-                    </li>
-                    </ul>
-                    <button class="confirmar">Tudo certo, pode pedir!</button>
-                    <button class="cancelar">Cancelar</button>
-                </div>
-            </div>
+        <div class="overlay">
+          <div class="confirmar-pedido">
+            <div class="titulo">Confirme seu pedido</div>
+            <ul>
+              <li class="prato">
+                <div class="nome">${dish.name}</div>
+                <div class="preco">${dish.price}</div>
+              </li>
+              <li class="bebida">
+                <div class="nome">${drink.name}</div>
+                <div class="preco">${drink.price}</div>
+              </li>
+              <li class="sobremesa">
+                <div class="nome">${dessert.name}</div>
+                <div class="preco">${dessert.price}</div>
+              </li>
+              <li class="total">
+                <div>Total</div>
+                <div class="preco">R$ ${order.getTotalPrice().toFixed(2)}</div>
+              </li>
+            </ul>
+            <button class="confirmar">Tudo certo, pode pedir!</button>
+            <button class="cancelar">Cancelar</button>
+          </div>
+        </div>
         `;
         this.element = modal;
         document.body.append(modal);
-        this.commandsButton(order);
+        this.setupButtons(order);
     }
-    commandsButton(order) {
+    setupButtons(order) {
         document.querySelector(".confirmar").addEventListener("click", ()=>{
             order.sendWhatsApp();
         });
-        document.querySelector(".cancelar").addEventListener("click", ()=>{
-            setTimeout(()=>{
-                this.element.remove();
-            }, 400);
-        });
+        document.querySelector(".cancelar").addEventListener("click", ()=>this.element.remove());
     }
 }
 exports.default = Modal;

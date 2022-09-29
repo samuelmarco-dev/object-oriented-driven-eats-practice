@@ -7,60 +7,62 @@ import Modal from "./modal";
 export default class Restaurant {
     constructor(dishes, drinks, desserts) {
         this.dishes = this.buildDishes(dishes);
-        // this.drinks = this.buildDrinks(drinks);
-        // this.desserts = this.buildDessert(desserts);
+        this.drinks = this.buildDrinks(drinks);
+        this.dessert = this.buildDesserts(desserts);
         this.order = new Order();
-        this.button = document.querySelector(".fazer-pedido");
+        this.orderButton = document.querySelector(".fazer-pedido");
+    }
+
+    onClickCallback(option) {
+        if (option instanceof Dish) this.order.dish = option;
+        if (option instanceof Drink) this.order.drink = option;
+        if (option instanceof Dessert) this.order.dessert = option;
+
+        if (
+            this.order.isReady() &&
+            !this.orderButton.classList.contains("ativo")
+        )
+            this.enableOrderButton();
+    }
+
+    enableOrderButton() {
+        this.orderButton.classList.add("ativo");
+        this.orderButton.disabled = false;
+        this.orderButton.innerHTML = "Fazer pedido";
+
+        this.orderButton.addEventListener("click", () =>
+            new Modal().open(this.order)
+        );
     }
 
     buildDishes(dishes) {
-        return dishes.map(object => {
-            const { name, description, image, price } = object;
-            const container = document.querySelector(".opcoes.prato");
-            const dish = new Dish(name, description, price, image);
-            dish.draw(container, this.onClickCallback.bind(this));
+        return dishes.map(({ name, image, description, price }) => {
+            const dishContainer = document.querySelector(".opcoes.prato");
+            const dish = new Dish(name, image, description, price);
+            dish.draw(dishContainer, this.onClickCallback.bind(this));
 
             return dish;
         });
     }
 
-    // buildDrinks(drinks) {
-    //     return drinks.map(({ name, description, image, price }) => {
-    //         const container = document.querySelector(".opcoes.bebida");
-    //         const drink = new Drink(name, description, price, image);
-    //         drink.draw(container, this.onClickCallback.bind(this));
+    buildDrinks(drinks) {
+        return drinks.map(({ name, image, description, price }) => {
+            const drinkContainer = document.querySelector(".opcoes.bebida");
+            const drink = new Drink(name, image, description, price);
+            drink.draw(drinkContainer, this.onClickCallback.bind(this));
 
-    //         return drink;
-    //     });
-    // }
-
-    // buildDesserts(desserts) {
-    //     return desserts.map(({ name, description, image, price }) => {
-    //         const container = document.querySelector(".opcoes.sobremesa");
-    //         const dessert = new Dessert(name, description, price, image);
-    //         dessert.draw(container, this.onClickCallback.bind(this));
-
-    //         return dessert;
-    //     });
-    // }
-
-    onClickCallback(option) {
-        if(option instanceof Dish) this.order.dish = option;
-        if(option instanceof Drink) this.order.drink = option;
-        if(option instanceof Dessert) this.order.dessert = option;
-
-        if (this.order.isReady() && !this.button.classList.contains("ativo")) {
-            this.enableOrderButton();
-        }
+            return drink;
+        });
     }
 
-    enableOrderButton() {
-        this.button.classList.add("ativo");
-        this.button.disabled = false;
-        this.button.innerHTML = `Fazer pedido...`;
+    buildDesserts(desserts) {
+        return desserts.map(({ name, image, description, price }) => {
+            const dessertContainer =
+                document.querySelector(".opcoes.sobremesa");
+            const dessert = new Dessert(name, image, description, price);
+            dessert.draw(dessertContainer, this.onClickCallback.bind(this));
 
-        this.button.addEventListener("click", () =>
-            new Modal().open(this.order)
-        );
+            return dessert;
+        });
     }
 }
